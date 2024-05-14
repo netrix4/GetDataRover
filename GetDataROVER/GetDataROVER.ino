@@ -1,14 +1,11 @@
-
 #include <Wire.h>
-// #include <SPI.h>
 #include <Adafruit_BMP280.h>
 
 #include <SPI.h>
 #include <SD.h>
 const int chipSelect = 4;
 
-
-Adafruit_BMP280 bmp; // use I2C interface
+Adafruit_BMP280 bmp;                                // use I2C interface
 Adafruit_Sensor *bmp_temp = bmp.getTemperatureSensor();
 Adafruit_Sensor *bmp_pressure = bmp.getPressureSensor();
 
@@ -45,53 +42,65 @@ void setup() {
 void loop() {
   float tempReaded = 0;
   float pressReaded = 0;
+  int counter = 0; // This is the variable were we define the boundaries of measurement
   String header = " === Mediciones Obtenidas ===";
   sensors_event_t temp_event, pressure_event;
 
+  // Time it takes for the ROVER to reach the medition point
+  delay(13000);
 
-  bmp_temp->getEvent(&temp_event);
-  bmp_pressure->getEvent(&pressure_event);
+  // Measurments will take 6 seconds and will be 10 times because of the file lenght
+  while (contador < 10){
 
-  Serial.println(header);
-  Serial.print(F("Temperature = "));
-  
-  tempReaded = temp_event.temperature;
-  Serial.print(tempReaded);
-  Serial.println(" *C");
+    bmp_temp->getEvent(&temp_event);
+    bmp_pressure->getEvent(&pressure_event);
 
-  Serial.print(F("Pressure = "));
-  
-  pressReaded = pressure_event.pressure;
-  Serial.print(pressReaded);
-  Serial.println(" hPa");
-  Serial.println(" ============================ \n");
+    // Serial.println(header);
+    // Serial.print(F("Temperature = "));
+    
+    tempReaded = temp_event.temperature;
+    // Serial.print(tempReaded);
+    // Serial.println(" *C");
 
+    Serial.print(F("Pressure = "));
+    
+    pressReaded = pressure_event.pressure;
+    // Serial.print(pressReaded);
+    // Serial.println(" hPa");
 
-  File dataFile = SD.open("datalog.txt", FILE_WRITE);
+    // Serial.println(" ============================ \n");
 
-  // delay(150);
+    File dataFile = SD.open("datalog.txt", FILE_WRITE);
+
     // if the file is available, write to it:
-  if (dataFile) {
-    // bmp_temp->getSensor(&sensorBMPInfo);
-    // Serial.print(sensorBMPInfo.type);
+    if (dataFile) {
 
-    dataFile.println(header);
-    dataFile.print("Temperature = ");
-    dataFile.print(tempReaded);
-    dataFile.println(" *C");
+      dataFile.println(header);
+      dataFile.print("Measurement number: ");
+      dataFile.println(counter);
+      dataFile.print("Temperature = ");
+      dataFile.print(tempReaded);
+      dataFile.println(" *C");
 
-    dataFile.print("Pressure = ");
-    dataFile.print(pressReaded);
-    dataFile.println(" hPa");
+      dataFile.print("Pressure = ");
+      dataFile.print(pressReaded);
+      dataFile.println(" hPa");
 
-    dataFile.println(" ============================ \n");
-    dataFile.close();
+      dataFile.println(" ============================ \n");
+      dataFile.close();
+
+    }
+
+    // if the file isn't open, pop up an error:
+    else {
+      Serial.println("error opening datalog.txt");
+    }
+    Serial.println();
+
+
+    delay(6000);  // Sensor will take 6 seconds to measure once
+    counter ++;
   }
-  // if the file isn't open, pop up an error:
-  else {
-    Serial.println("error opening datalog.txt");
-  }
 
-  Serial.println();
-  delay(5500);
+  delay(26000); // Double the time
 }
