@@ -42,12 +42,15 @@ void setup() {
 void loop() {
   float tempReaded = 0;
   float pressReaded = 0;
-  int counter = 0; // This is the variable were we define the boundaries of measurement
+  int contador = 0; // This is the variable were we define the boundaries of measurement
   String header = " === Mediciones Obtenidas ===";
   sensors_event_t temp_event, pressure_event;
+Serial.println("En camino al punto de destino... (40s)");
+
 
   // Time it takes for the ROVER to reach the medition point
-  delay(13000);
+  delay(40000);
+  Serial.println("En el destino midiendo (1m)");
 
   // Measurments will take 6 seconds and will be 10 times because of the file lenght
   while (contador < 10){
@@ -56,13 +59,14 @@ void loop() {
     bmp_pressure->getEvent(&pressure_event);
 
     // Serial.println(header);
+
     // Serial.print(F("Temperature = "));
     
     tempReaded = temp_event.temperature;
     // Serial.print(tempReaded);
     // Serial.println(" *C");
 
-    Serial.print(F("Pressure = "));
+    // Serial.print(F("Pressure = "));
     
     pressReaded = pressure_event.pressure;
     // Serial.print(pressReaded);
@@ -77,7 +81,7 @@ void loop() {
 
       dataFile.println(header);
       dataFile.print("Measurement number: ");
-      dataFile.println(counter);
+      dataFile.println(contador+1);
       dataFile.print("Temperature = ");
       dataFile.print(tempReaded);
       dataFile.println(" *C");
@@ -89,18 +93,22 @@ void loop() {
       dataFile.println(" ============================ \n");
       dataFile.close();
 
+      Serial.print("Medicion ");
+      Serial.print(contador+1);
+      Serial.println(" lograda.");
+
     }
 
     // if the file isn't open, pop up an error:
     else {
       Serial.println("error opening datalog.txt");
     }
-    Serial.println();
 
 
     delay(6000);  // Sensor will take 6 seconds to measure once
-    counter ++;
+    contador ++;
   }
+    Serial.println("En camino al punto de inicio... (40s)");
 
-  delay(26000); // Double the time
+    delay(40000);  // Double the time
 }
