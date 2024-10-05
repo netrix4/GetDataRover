@@ -1,8 +1,10 @@
 #include <Wire.h>
 #include <Adafruit_BMP280.h>
+#include <ArduinoJson.h>
+#include <time.h>
 
 #include <SPI.h>
-#include <SD.h>
+// #include <SD.h>
 
 
 
@@ -55,9 +57,25 @@ void setup() {
 
   // Serial.println("BMP280 and uSD card initialized.");
   Serial.println("BMP280 inicializado.\n\n");
+  // struct tm preFormatedNow = {};
+  //   preFormatedNow.tm_year = 2024 - 1900; // Años desde 1900
+  //   preFormatedNow.tm_mon = 9;             // Mes (9 = octubre, ya que enero es 0)
+  //   preFormatedNow.tm_mday = 2;            // Día del mes
+  //   preFormatedNow.tm_hour = 0;            // Hora
+  //   preFormatedNow.tm_min = 0;             // Minuto
+  //   preFormatedNow.tm_sec = 0; 
+  // time_t now = mktime(&preFormatedNow);
 }
 
 void loop() {
+
+  // Aqui cada que entra el ciclo se puede incrementar una hora simulada con el codigo comentado de arriba
+
+  JsonDocument doc;
+  time_t now = time(NULL);
+  tm timeinfo = *gmtime(&now);
+  char buf[32];
+
   float tempReaded = 0;
   float pressReaded = 0;
   int contador = 0;   // Aqui definimos el numero de mediciones por iteracion
@@ -75,19 +93,35 @@ void loop() {
     Serial.print("Temperatura = ");
     
     tempReaded = temp_event.temperature;
+    // doc["TemperaturaMed"] = tempReaded;
+    doc["TemperaturaMed"]["Magnitud"] = tempReaded;
+    doc["TemperaturaMed"]["Unidades"] = "C";
+    strftime(buf, sizeof(buf), "%FT%TZ", &timeinfo);
+    doc["TemperaturaMed"]["FechaHora"] = buf;
+
     Serial.print(tempReaded);
     Serial.println(" *C");
 
     Serial.print("Presion = ");
     
     pressReaded = pressure_event.pressure;
+
+    // doc["PresionMed"] = pressReaded;
+    doc["PresionMed"]["Magnitud"] = pressReaded;
+    doc["PresionMed"]["Unidades"] = "hPa";
+    // char buf[32];
+    strftime(buf, sizeof(buf), "%FT%TZ", &timeinfo);
+    doc["PresionMed"]["FechaHora"] = buf;
+
     Serial.print(pressReaded);
     Serial.println(" hPa");
 
     Serial.println(" ============================ \n");
 
+    serializeJson(doc, Serial);
+    Serial.println("\n");
 
-  
+
 
 
 
