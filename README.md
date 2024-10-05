@@ -1,2 +1,2 @@
 # GetDataRover
-Para la materia de Sistemas programables. Medidor de temp y pres para guardar en microSD
+Para la materia de Desarrolo Web. Estacion Meteorologica recopilando datos para guardar en microSD (JSON) para postear a un Dashboard.
