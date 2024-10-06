@@ -79,24 +79,22 @@ void loop() {
 
   dataString += "},\n";
 
-  Serial.println(dataString);
-
   // File dataFile = SD.open("otro.txt", FILE_WRITE);
   // File dataFile = SD.open("otro.txt", O_APPEND);
   File dataFile = SD.open("otro.txt", FILE_WRITE);
 
   // if the file is available, write to it:
   if (dataFile) {
-    // dataFile.println(String(dataString));
+    Serial.println(dataString);
+
+    dataFile.println(dataString);
     dataFile.close();
     
-    Serial.println();
     // print to the serial port too:
-    Serial.println(dataString);
   }
   // if the file isn't open, pop up an error:
   else {
     Serial.println("error opening otro.txt");
   }
-  delay(10000);
+  delay(10000); // 10 segundos
 }
